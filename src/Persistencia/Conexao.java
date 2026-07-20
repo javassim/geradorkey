@@ -11,7 +11,7 @@ import java.sql.DriverManager;
 public class Conexao {
 
     private static final String NOME_BANCO =
-            "Thumb.db";
+            "javasys.db";
 
     public static Connection conectar() throws Exception {
 

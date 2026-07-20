@@ -4,6 +4,7 @@
  */
 package Interface;
 
+import Model.CriptografiaUtil;
 import Model.HashUtil;
 import Persistencia.Conexao;
 import java.io.BufferedReader;
@@ -12,6 +13,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
@@ -46,6 +49,8 @@ public class NewJFrame extends javax.swing.JFrame {
         jtdecrip = new javax.swing.JTextField();
         jButton4 = new javax.swing.JButton();
         jButton5 = new javax.swing.JButton();
+        jDateChooser1 = new com.toedter.calendar.JDateChooser();
+        jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -75,7 +80,7 @@ public class NewJFrame extends javax.swing.JFrame {
             }
         });
 
-        jButton4.setText("Criar Chave");
+        jButton4.setText("Salvar Chave");
         jButton4.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton4ActionPerformed(evt);
@@ -89,6 +94,10 @@ public class NewJFrame extends javax.swing.JFrame {
             }
         });
 
+        jDateChooser1.setDateFormatString("dd/MM/yyyy");
+
+        jLabel1.setText("Data validade");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -101,13 +110,17 @@ public class NewJFrame extends javax.swing.JFrame {
                     .addComponent(jtdecrip)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jButton4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                            .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(0, 383, Short.MAX_VALUE)))
+                            .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jButton3)
+                            .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jDateChooser1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(26, 26, 26)
+                                .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(0, 259, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -121,15 +134,19 @@ public class NewJFrame extends javax.swing.JFrame {
                 .addComponent(jButton2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jtcript, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jButton4)
+                .addGap(5, 5, 5)
+                .addComponent(jLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jDateChooser1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton4))
                 .addGap(42, 42, 42)
                 .addComponent(jButton3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jtdecrip, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(28, 28, 28)
                 .addComponent(jButton5)
-                .addContainerGap(31, Short.MAX_VALUE))
+                .addContainerGap(21, Short.MAX_VALUE))
         );
 
         pack();
@@ -213,19 +230,7 @@ public class NewJFrame extends javax.swing.JFrame {
  
 String banco="";
 String pc="";
-
-
-
-
-
-
-
-
-
-
-
-        
-    String sql = "SELECT thumb FROM thumb WHERE cod = ?";
+    String sql = "SELECT classes FROM classes WHERE cod = ?";
 
     try (Connection conn = Conexao.conectar();
          PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -237,8 +242,8 @@ String pc="";
             if (rs.next()) {
 
               
-          jtdecrip.setText(rs.getString("thumb"));
-             banco=rs.getString("thumb");
+          jtdecrip.setText(rs.getString("classes"));
+             banco=rs.getString("classes");
     
             }
             
@@ -261,9 +266,14 @@ String valor=jtcript.getText().trim();
 int codigo=1;
 
 
+Date dt1 = jDateChooser1.getDate();
+SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+String dt = (CriptografiaUtil.criptografar(sdf.format(dt1)));
+
+
         ///salvar no banco
          String sql =
-            "UPDATE thumb SET thumb=?"
+            "UPDATE classes SET classes=?, dt=?"
             + "WHERE cod=?";
         int registros;
 
@@ -271,9 +281,13 @@ int codigo=1;
          PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
         int i = 1;
-        pstmt.setString(1, valor);
+       
         
-        pstmt.setInt(2, codigo);
+        
+        pstmt.setString(1, valor);
+        pstmt.setString(2, dt);
+        
+        pstmt.setInt(3, codigo);
        
 
         registros = pstmt.executeUpdate();
@@ -496,7 +510,7 @@ int codigo=1;
         /////////////////////////////
         ///
         ///pegar banco
-String sql = "SELECT thumb FROM thumb WHERE cod = ?";
+String sql = "SELECT classes FROM classes WHERE cod = ?";
 
     try (Connection conn = Conexao.conectar();
          PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -509,7 +523,7 @@ String sql = "SELECT thumb FROM thumb WHERE cod = ?";
 
               
          // jtdecrip.setText(rs.getString("thumb"));
-             banco=rs.getString("thumb");
+             banco=rs.getString("classes");
     
             }
             
@@ -579,6 +593,8 @@ String sql = "SELECT thumb FROM thumb WHERE cod = ?";
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
+    private com.toedter.calendar.JDateChooser jDateChooser1;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JTextField jtcript;
     private javax.swing.JTextField jtdados;
     private javax.swing.JTextField jtdecrip;
